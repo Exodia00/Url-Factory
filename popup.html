@@ -1,0 +1,45 @@
+<!-- 
+* The main popup menu :
+* Allows to view a list of user defined URLs
+* Contains a modify button for each option
+* Contains an add button to add a url
+ -->
+ <!-- TODO: replace "item" with a more semantic word -->
+<html>
+    <head>
+        <!-- TODO: move style to a seperate css file -->
+        <link rel="stylesheet" href="popup.css">
+    </head>
+    <body>
+         
+        <!-- landing content -->
+        <div class="landing-div">
+            <h1>URL factory</h1>
+            <h2>Your items</h2>
+            <div class="list-container">
+            </div>
+            <div class="btn btn__add-item">New item</div>
+        </div>
+        <!-- add item form -->
+        <form class="form form__add-item inactive">
+            <h2>New item</h2>
+            <label for="label">Label (Required)</label>
+            <input type="url" name="label" id="label" required>
+            <label for="base-url">Base URL (Required)</label>
+            <input type="text" name="base-url" id="base-url" required>
+            <label for="suffix">Path prefix</label>
+            <input type="text" name="prefix" id="prefix">
+            <label for="suffix">Path suffix</label>
+            <input type="text" name="suffix" id="suffix">
+            <div class="preview">
+                <span style="font-weight:500;"> Preview :</span>
+                <div class="preview__txt inactive"></div>
+            </div>
+            <div class="btns-container">
+                <div class="btn btn__confirm">Confirm</div>
+                <div class="btn btn__return">Return</div>
+            </div>
+        </form>
+        <script src="popup.js"></script>
+    </body>
+</html>

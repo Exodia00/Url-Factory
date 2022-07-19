@@ -1,0 +1,24 @@
+{
+    
+    "manifest_version": 3,
+    "name": "URL factory",
+    "version": "1.0",
+
+    "description": "This extension will allow you to preform a URL based search, from a selected input and user defined URLs",
+
+    "author": "Mohamed BAHYAOUI",
+
+    "background": {
+        "service_worker": "background.js"
+    },
+
+    "permissions" : [
+        "storage",
+        "contextMenus"
+    ],
+
+    "action": {
+        "default_title": "Menu",
+        "default_popup": "popup.html"
+    }
+}
