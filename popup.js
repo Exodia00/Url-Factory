@@ -132,14 +132,21 @@ function updateUI(data){
 
 // Building the ui from data : Populating the items list container with cards
 function buildUI(data){
+     
+    /*  
+    *   TODO: Give sementice importance to the preview since it will be the only element displaying all the data
+    */
     data.forEach(elm => {
+        // Card element
         let card = document.createElement("div")
         card.classList.add("card");
         
+        // Label
         let label = document.createElement('div');
         label.classList.add("card__label");
         label.innerText = elm.label;
 
+        // Base URL 
         let baseUrl = document.createElement('div');
         baseUrl.classList.add('card__baseUrl');
 
@@ -150,14 +157,7 @@ function buildUI(data){
 
         baseUrl.appendChild(baseUrlLink);
 
-        let prefix = document.createElement('div');
-        prefix.classList.add('card__prefix');
-        prefix.innerText = elm.prefix;
-
-        let suffix = document.createElement('div');
-        suffix.classList.add('card__suffix');
-        suffix.innerText = elm.suffix;
-
+        // Preview
         let preview = document.createElement('div');
         preview.classList.add('card__preview');
         preview.innerText = elm.baseUrl + "/" + elm.prefix + "XXXXXX" + elm.suffix;
@@ -181,8 +181,6 @@ function buildUI(data){
 
         card.appendChild(label);
         card.appendChild(baseUrl);
-        card.appendChild(prefix);
-        card.appendChild(suffix);
         card.appendChild(preview);
         card.appendChild(btnsContainer);
 
