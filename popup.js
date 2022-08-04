@@ -72,7 +72,10 @@ confirmBtn.addEventListener("click", ()=>{
     chrome.storage.sync.get('dataArray', data=>{
         let dataArray = data.dataArray;
         // Get a list of all labels to check wether the label is available or not
-        let labels = dataArray.map(elm=>elm.label);
+        let labels = [];
+        if(typeof dataArray != "undefined"){    // Checking if dataArray is undefined, which is true when adding the first element to storage
+            labels = dataArray.map(elm=>elm.label);
+        }
 
         if(labels.includes(inputData.label)){    
             /*  Here the label already exists in the storage
@@ -94,7 +97,12 @@ confirmBtn.addEventListener("click", ()=>{
             }
         }else{
             // Here the label is not used, so we push the input object to the dataArray and we set in in the storage
-            dataArray.push(inputData);
+            // Checking for an undefined dataArray
+            if(typeof dataArray != 'undefined'){
+                dataArray.push(inputData);
+            }else{
+                dataArray = [inputData];
+            }
             chrome.storage.sync.set({"dataArray" : dataArray}, ()=>{
                 clearInputs();      // Clear the inputs in the form
                 fetchData();        // to fetch and update the ui in the landing page
