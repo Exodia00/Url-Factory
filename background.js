@@ -74,23 +74,22 @@ chrome.storage.onChanged.addListener((changes, namespace)=>{
 })
 
 // Watching for messages :
-chrome.runtime.onMessage.addListener((message)=>{
+chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
     // updating the context menu
     if(message.action == "updateMenu"){
         refreshMenu();
+        sendResponse(true)
         
     }else if(message.action == "remove"){
         chrome.storage.sync.get('dataArray', response=>{
             let data = response.dataArray;
             data = data.filter(elm => elm.label != message.data)
             chrome.storage.sync.set({'dataArray' : data}, ()=>{
-                deleteFromMenu(message.data)      
                 return true
             })
+            return true
         })
-    }else if(message.action == "modify"){
-        // Message recieved to modify a path
-        return true
+        sendResponse(true)
     }
 })
 

@@ -210,6 +210,7 @@ function buildUI(data){
 function remove(label){
     // send a message to the background to remove the element
     chrome.runtime.sendMessage({action: "remove", data: label}, ()=>{
+        fetchData();
     })
 }
 
