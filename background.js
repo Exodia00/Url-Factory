@@ -88,6 +88,9 @@ chrome.runtime.onMessage.addListener((message)=>{
                 return true
             })
         })
+    }else if(message.action == "modify"){
+        // Message recieved to modify a path
+        return true
     }
 })
 

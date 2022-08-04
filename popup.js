@@ -59,35 +59,50 @@ returnBtn.addEventListener("click", ()=>{
 })
 // confirmBtn listener
 confirmBtn.addEventListener("click", ()=>{
+    // Assert that the form is valid
     if(!isFormValid()){return}
-    let resultData = {
+    // Get the data as an object
+    let inputData = {
         label : labelValue,
         baseUrl : baseUrlValue,
         prefix : prefixValue,
         suffix : suffixValue
     }
-    /* 
-    *    Updating the paths data :
-    *    First we get the saved data, which is an array of all path objects
-    *    then we append the newly input path object
-    */
-    let paths=[];
-    chrome.storage.sync.get('dataArray', (data)=>{
-        if(typeof data.dataArray==='undefined'){
-            paths=[resultData]
+    // Acces the sync storage
+    chrome.storage.sync.get('dataArray', data=>{
+        let dataArray = data.dataArray;
+        // Get a list of all labels to check wether the label is available or not
+        let labels = dataArray.map(elm=>elm.label);
+
+        if(labels.includes(inputData.label)){    
+            /*  Here the label already exists in the storage
+            *   Which can either be due to the user trying to change an element   
+            *   Or him chosing an already used label by mistake
+            */
+            if(confirm('An element with this label already exists, are you sure you want to override changes ?')){
+                // User confirms : Update the element in the dataArray
+                dataArray[labels.indexOf(inputData.label)] = inputData;
+                chrome.storage.sync.set({"dataArray" : dataArray}, ()=>{
+                    clearInputs();      // Clear the inputs in the form
+                    fetchData();        // to fetch and update the ui in the landing page
+                    showLandingDiv();   // Switch view to landing div
+                })
+            }else{
+                // User cancels
+                clearInputs();
+                showLandingDiv();
+            }
         }else{
-            paths = data.dataArray;
-            paths.push(resultData);
+            // Here the label is not used, so we push the input object to the dataArray and we set in in the storage
+            dataArray.push(inputData);
+            chrome.storage.sync.set({"dataArray" : dataArray}, ()=>{
+                clearInputs();      // Clear the inputs in the form
+                fetchData();        // to fetch and update the ui in the landing page
+                showLandingDiv();   // Switch view to landing div
+            })
         }
-        chrome.storage.sync.set({"dataArray": paths}, ()=>{
-            clearInputs();
-            fetchData();
-            showLandingDiv();
-        })
 
     })
-
-
 })
 // form elements change event
 labelFld.addEventListener("input", updateValues)
@@ -134,7 +149,7 @@ function updateUI(data){
 function buildUI(data){
      
     /*  
-    *   TODO: Give sementice importance to the preview since it will be the only element displaying all the data
+        *   TODO: Give sementice importance to the preview since it will be the only element displaying all the data
     */
     data.forEach(elm => {
         // Card element
@@ -168,13 +183,15 @@ function buildUI(data){
         let modifyBtn = document.createElement('div');
         modifyBtn.classList.add('btn','btn--modify');
         modifyBtn.innerText = "Modify";
+        modifyBtn.addEventListener('click', ()=>{
+            modify(elm.label);
+        })
 
         let removeBtn = document.createElement('div');
         removeBtn.classList.add('btn','btn--remove');
         removeBtn.innerText = "Remove";
         removeBtn.addEventListener('click', ()=>{
             remove(elm.label)})
-        // TODO: listeners
 
         btnsContainer.appendChild(modifyBtn);
         btnsContainer.appendChild(removeBtn);
@@ -194,6 +211,34 @@ function remove(label){
     // send a message to the background to remove the element
     chrome.runtime.sendMessage({action: "remove", data: label}, ()=>{
     })
+}
+
+// Modifying an element in the form
+function modify(label){
+    // First we fetch all the data for the target element
+    chrome.storage.sync.get('dataArray', data=>{
+        let dataArray = data.dataArray;
+        let labels = dataArray.map(elm=>elm.label);
+        let targetData = dataArray[labels.indexOf(label)];
+
+        openModifyForm(targetData);
+    })
+
+    // chrome.runtime.sendMessage({action: "modify", data: label}, ()=>{
+    // })
+}
+
+// Open form with data from a target path
+function openModifyForm(element){
+    // Toggle the form
+    showForm();
+    // Fill form elements with data
+    labelFld.value = element.label;
+    baseUrlFld.value = element.baseUrl;
+    prefixFld.value = element.prefix;
+    suffixFld.value = element.suffix;
+    // update values
+    updateValues();
 }
 
 // Validate form
